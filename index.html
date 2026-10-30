@@ -1,0 +1,358 @@
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101b35">
+  <meta name="description" content="ClimaVivo — previsão do tempo com cenários animados e informações em tempo real.">
+
+  <title>ClimaVivo — O clima ganha vida</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+
+<body data-scene="night" data-weather="clear">
+
+  <!-- CENÁRIO ATMOSFÉRICO GLOBAL -->
+  <div class="weather-world" id="weatherWorld" aria-hidden="true">
+    <div class="sky-glow"></div>
+    <div class="sun-orb" id="sunOrb"></div>
+    <div class="moon-orb" id="moonOrb">
+      <span class="moon-crater crater-one"></span>
+      <span class="moon-crater crater-two"></span>
+      <span class="moon-crater crater-three"></span>
+    </div>
+
+    <div class="stars-layer" id="starsLayer"></div>
+    <div class="clouds-layer" id="cloudsLayer"></div>
+    <div class="weather-particles" id="weatherParticles"></div>
+
+    <div class="distant-hills"></div>
+    <div class="city-silhouette" id="citySilhouette"></div>
+
+    <div class="street-scene">
+      <div class="street-horizon"></div>
+      <div class="street-road"></div>
+      <div class="road-reflection" id="roadReflection"></div>
+      <div class="road-center-lines"></div>
+    </div>
+
+    <div class="fog-layer" id="fogLayer"></div>
+    <div class="lightning-layer" id="lightningLayer"></div>
+  </div>
+
+  <!-- TELA DE ENTRADA -->
+  <section class="welcome-screen" id="welcomeScreen">
+    <header class="welcome-header">
+      <a class="brand" href="#" aria-label="ClimaVivo">
+        <span class="brand-icon"><i class="fa-solid fa-cloud-sun"></i></span>
+        <span class="brand-name">Clima<span>Vivo</span></span>
+      </a>
+
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        EXPERIÊNCIA METEOROLÓGICA
+      </div>
+    </header>
+
+    <main class="welcome-content">
+      <div class="welcome-copy">
+        <div class="eyebrow">
+          <span class="eyebrow-line"></span>
+          O MUNDO LÁ FORA, EM TEMPO REAL
+        </div>
+
+        <h1>
+          Sinta o clima.<br>
+          <span>Viva o momento.</span>
+        </h1>
+
+        <p class="welcome-description">
+          Muito mais que uma previsão. Descubra o céu da sua cidade
+          em uma experiência visual que acompanha cada mudança do tempo.
+        </p>
+
+        <form class="welcome-search" id="welcomeForm">
+          <i class="fa-solid fa-location-dot search-location-icon"></i>
+          <input
+            type="text"
+            id="welcomeCityInput"
+            placeholder="Digite uma cidade..."
+            autocomplete="off"
+            aria-label="Pesquisar cidade"
+            required
+          >
+          <button type="submit" class="welcome-search-button" aria-label="Buscar cidade">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <button class="location-link" id="welcomeLocationButton" type="button">
+          <i class="fa-solid fa-crosshairs"></i>
+          Usar minha localização
+        </button>
+
+        <div class="welcome-divider">
+          <span></span>
+          <small>OU EXPLORE AGORA</small>
+          <span></span>
+        </div>
+
+        <div class="city-shortcuts">
+          <button type="button" data-city="São Paulo">São Paulo</button>
+          <button type="button" data-city="Rio de Janeiro">Rio de Janeiro</button>
+          <button type="button" data-city="Lisboa">Lisboa</button>
+          <button type="button" data-city="Tokyo">Tóquio</button>
+        </div>
+
+        <p class="welcome-error" id="welcomeError" role="status"></p>
+      </div>
+
+      <div class="welcome-visual">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="visual-glow"></div>
+
+        <div class="floating-weather-icon">
+          <div class="floating-cloud">
+            <i class="fa-solid fa-cloud"></i>
+          </div>
+          <div class="floating-sun">
+            <i class="fa-solid fa-sun"></i>
+          </div>
+          <div class="floating-spark spark-one">✦</div>
+          <div class="floating-spark spark-two">✧</div>
+          <div class="floating-spark spark-three">·</div>
+        </div>
+
+        <div class="visual-caption">
+          <span class="caption-dot"></span>
+          <span>UMA NOVA FORMA DE SENTIR O TEMPO</span>
+        </div>
+      </div>
+    </main>
+
+    <footer class="welcome-footer">
+      <span>© <span class="current-year"></span> ClimaVivo</span>
+      <span class="footer-separator"></span>
+      <span>Feito para acompanhar você.</span>
+      <span class="welcome-footer-right">
+        <i class="fa-solid fa-earth-americas"></i>
+        O mundo em um só lugar
+      </span>
+    </footer>
+  </section>
+
+  <!-- APLICATIVO PRINCIPAL -->
+  <main class="weather-app" id="weatherApp" hidden>
+
+    <header class="app-header">
+      <a href="#" class="brand app-brand" id="homeButton">
+        <span class="brand-icon"><i class="fa-solid fa-cloud-sun"></i></span>
+        <span class="brand-name">Clima<span>Vivo</span></span>
+      </a>
+
+      <form class="top-search" id="searchForm">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+          type="text"
+          id="cityInput"
+          placeholder="Buscar cidade..."
+          autocomplete="off"
+          aria-label="Buscar cidade"
+          required
+        >
+        <button type="submit" aria-label="Pesquisar">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="header-actions">
+        <button class="icon-button" id="locationButton" type="button" title="Minha localização" aria-label="Minha localização">
+          <i class="fa-solid fa-location-crosshairs"></i>
+        </button>
+        <button class="icon-button" id="refreshButton" type="button" title="Atualizar previsão" aria-label="Atualizar previsão">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+        <button class="icon-button home-icon-button" id="backToWelcome" type="button" title="Tela inicial" aria-label="Tela inicial">
+          <i class="fa-solid fa-house"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="app-content">
+
+      <div class="app-status-row">
+        <div class="status-location">
+          <i class="fa-solid fa-location-dot"></i>
+          <span id="cityName">Carregando cidade...</span>
+          <span class="country-badge" id="locationCountry">BR</span>
+        </div>
+
+        <div class="live-status">
+          <span class="live-dot"></span>
+          <span id="lastUpdated">Conectando ao clima</span>
+        </div>
+      </div>
+
+      <!-- DESTAQUE PRINCIPAL -->
+      <section class="hero-weather glass-panel">
+        <div class="hero-left">
+          <div class="hero-date" id="localDate">CONSULTANDO PREVISÃO</div>
+
+          <h1 class="hero-temperature">
+            <span id="currentTemp">--</span><sup>°</sup>
+          </h1>
+
+          <h2 class="hero-description" id="weatherDescription">Carregando clima...</h2>
+
+          <div class="feels-like">
+            <i class="fa-solid fa-temperature-half"></i>
+            Sensação térmica de <strong id="feelsLike">--°</strong>
+          </div>
+
+          <div class="hero-minmax">
+            <span><i class="fa-solid fa-arrow-up"></i> Máx. <b id="todayMax">--°</b></span>
+            <span><i class="fa-solid fa-arrow-down"></i> Mín. <b id="todayMin">--°</b></span>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="main-weather-icon" id="mainWeatherIcon">
+            <i class="fa-solid fa-cloud-sun"></i>
+          </div>
+
+          <div class="hero-local-time">
+            <span class="time-label">HORÁRIO LOCAL</span>
+            <strong id="localTime">--:--</strong>
+          </div>
+
+          <div class="scene-caption">
+            <span class="scene-caption-dot"></span>
+            <span id="sceneCaption">Céu em tempo real</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- INDICADORES -->
+      <section class="metrics-grid" aria-label="Condições atuais">
+
+        <article class="metric-card glass-panel">
+          <div class="metric-top">
+            <span>Umidade</span>
+            <span class="metric-icon humidity-icon"><i class="fa-solid fa-droplet"></i></span>
+          </div>
+          <div class="metric-value"><strong id="humidity">--</strong><span>%</span></div>
+          <div class="metric-bar"><span id="humidityBar"></span></div>
+          <p id="humidityDescription">Umidade do ar</p>
+        </article>
+
+        <article class="metric-card glass-panel">
+          <div class="metric-top">
+            <span>Vento</span>
+            <span class="metric-icon wind-icon"><i class="fa-solid fa-wind"></i></span>
+          </div>
+          <div class="metric-value"><strong id="windSpeed">--</strong><span>km/h</span></div>
+          <div class="wind-detail">
+            <span class="compass" id="windCompass"><i class="fa-solid fa-location-arrow"></i></span>
+            <span id="windDirection">Direção do vento</span>
+          </div>
+          <p id="windDescription">Velocidade atual</p>
+        </article>
+
+        <article class="metric-card glass-panel">
+          <div class="metric-top">
+            <span>Pressão</span>
+            <span class="metric-icon pressure-icon"><i class="fa-solid fa-gauge-high"></i></span>
+          </div>
+          <div class="metric-value"><strong id="pressure">----</strong><span>hPa</span></div>
+          <div class="metric-note" id="pressureStatus">Pressão atmosférica</div>
+          <p>Pressão ao nível do mar/local</p>
+        </article>
+
+        <article class="metric-card glass-panel">
+          <div class="metric-top">
+            <span>Visibilidade</span>
+            <span class="metric-icon visibility-icon"><i class="fa-solid fa-eye"></i></span>
+          </div>
+          <div class="metric-value"><strong id="visibility">--</strong><span>km</span></div>
+          <div class="metric-bar"><span id="visibilityBar"></span></div>
+          <p id="visibilityDescription">Alcance visual</p>
+        </article>
+      </section>
+
+      <!-- PREVISÃO POR HORA -->
+      <section class="forecast-section glass-panel">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">ACOMPANHE O DIA</span>
+            <h2>Próximas horas</h2>
+          </div>
+          <span class="section-icon"><i class="fa-regular fa-clock"></i></span>
+        </div>
+
+        <div class="hourly-forecast" id="hourlyForecast">
+          <div class="loading-text">Carregando previsão por hora...</div>
+        </div>
+      </section>
+
+      <!-- PREVISÃO DOS PRÓXIMOS DIAS -->
+      <section class="forecast-section glass-panel">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">PLANEJE SEUS PRÓXIMOS DIAS</span>
+            <h2>Previsão para 5 dias</h2>
+          </div>
+          <span class="section-icon"><i class="fa-regular fa-calendar-days"></i></span>
+        </div>
+
+        <div class="daily-forecast" id="dailyForecast">
+          <div class="loading-text">Carregando previsão diária...</div>
+        </div>
+      </section>
+
+      <!-- DICA DO CLIMA -->
+      <section class="weather-advice glass-panel">
+        <div class="advice-icon" id="adviceIcon">
+          <i class="fa-solid fa-lightbulb"></i>
+        </div>
+        <div class="advice-content">
+          <span class="section-kicker">DICA DO CLIMA</span>
+          <h3 id="adviceTitle">Prepare-se para o dia</h3>
+          <p id="adviceText">Buscando informações para sugerir como aproveitar o dia.</p>
+        </div>
+        <div class="advice-decoration"><i class="fa-solid fa-sparkles"></i></div>
+      </section>
+
+      <footer class="app-footer">
+        <span>© <span class="current-year"></span> ClimaVivo</span>
+        <span>Dados meteorológicos por OpenWeather</span>
+        <span><i class="fa-solid fa-cloud-sun"></i> O clima ganha vida.</span>
+      </footer>
+
+    </div>
+  </main>
+
+  <!-- AVISOS -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-info"></i>
+    <span id="toastMessage">Mensagem</span>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay" hidden>
+    <div class="loading-card">
+      <div class="loading-spinner"></div>
+      <strong>Observando o céu...</strong>
+      <span>Atualizando as condições meteorológicas</span>
+    </div>
+  </div>
+
+</body>
+</html>
